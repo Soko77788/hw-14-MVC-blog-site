@@ -1,5 +1,17 @@
 [
   {
- 
+    "name": "Moses Malone",
+    "email": "moses@example.com",
+    "password": "password123"
+  },
+  {
+    "name": "Donnie Darko",
+    "email": "Donnie@example.com",
+    "password": "password456"
+  },
+  {
+    "name": "Walter White",
+    "email": "Walter@example.com",
+    "password": "password789"
   }
 ]
