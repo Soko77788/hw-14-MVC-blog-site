@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { User, Post } = require('../models')
+const { User, Post, Comment } = require('../models')
 
 // Example route to render homepage
 router.get('/', async (req, res) => {
@@ -31,9 +31,25 @@ router.get('/dashboard', (req, res) => {
   }
 });
 
-router.get('/blogpost/:id', (req, res) => {
+router.get('/blogpost/:id', async (req, res) => {
+  const { id } = req.params
   try {
-  res.render('blogpost')
+    const postData = await Post.findByPk(id, { 
+      include: [
+        {
+          model: User,
+          attributes: ['name'],
+        },
+          {
+            model: Comment,
+            include: [User],
+          },
+      ],
+    })
+
+    const post = postData.get({ plain: true })
+    console.log('Post Data:', post);
+  res.render('blogpost', post)
   } catch(err) {
     res.status(500).send('Error rendering blogpost route')
   }
