@@ -14,14 +14,17 @@ router.get('/', async (req, res) => {
 // Route to create a new user
 router.post('/', async (req, res) => {
   try {
-    const newUser = await User.create(req.body);
+    const userData = await User.create(req.body);
+
     req.session.save(() => {
-      req.session.user_id = newUser.id;
+      req.session.user_id = userData.id;
       req.session.logged_in = true;
-      res.status(200).json(newUser);
+
+      res.json({ user: userData, message: 'You are now signed up and logged in!' });
     });
+
   } catch (err) {
-    res.status(400).json(err);
+    res.status(500).json(err);
   }
 });
 
