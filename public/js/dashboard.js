@@ -39,9 +39,12 @@ document.addEventListener('DOMContentLoaded', () => {
     editButtons.forEach((button) => {
       button.addEventListener('click', (event) => {
         editingPostId = event.target.getAttribute('data-id');
-        const post = posts.find((post) => post.id === Number(editingPostId));
-        document.querySelector('#post-title').value = post.title;
-        document.querySelector('#post-content').value = post.content;
+        const posts = Array.from(document.querySelectorAll('.post'))
+        console.log(posts)
+        const post = posts.find((post) => 
+          post.id === editingPostId);
+        document.querySelector('#post-title').value = post.querySelector('h2').innerText;
+        document.querySelector('#post-content').value = post.querySelector('p').innerText;
         postFormContainer.style.display = 'block';
       });
     });
