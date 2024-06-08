@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const { User, Post, Comment } = require('../models')
+const withAuth = require('../utils/authMiddleware');
 
 // Example route to render homepage
 router.get('/', async (req, res) => {
@@ -17,17 +18,29 @@ router.get('/', async (req, res) => {
     // Serialize data so the template can read it
     const posts = postData.map((post) => post.get({ plain: true }));
 console.log(posts)
-  res.render('home', { posts });
+  res.render('home', { posts, logged_in: req.session.logged_in });
   } catch(err) {
     res.status(500).send('Error rendering home route')
   }
 });
 
-router.get('/dashboard', (req, res) => {
+router.get('/dashboard', withAuth, async (req, res) => {
   try {
-  res.render('dashboard')
-  } catch(err) {
-    res.status(500).send('Error rendering dashboard route')
+    const postData = await Post.findAll({
+      where: {
+        user_id: req.session.user_id,
+      },
+      include: [{ model: User }],
+    });
+
+    const posts = postData.map((post) => post.get({ plain: true }));
+
+    res.render('dashboard', {
+      posts,
+      logged_in: req.session.logged_in,
+    });
+  } catch (err) {
+    res.status(500).json(err);
   }
 });
 
@@ -49,7 +62,7 @@ router.get('/blogpost/:id', async (req, res) => {
 
     const post = postData.get({ plain: true })
     console.log('Post Data:', post);
-  res.render('blogpost', post)
+  res.render('blogpost', {...post, logged_in: req.session.logged_in})
   } catch(err) {
     res.status(500).send('Error rendering blogpost route')
   }

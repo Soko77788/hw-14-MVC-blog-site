@@ -1,28 +1,106 @@
 const router = require('express').Router();
-const { Post } = require('../../models');
+const { Post, User, Comment } = require('../../models');
+const withAuth = require('../../utils/authMiddleware'); // Assuming you have authentication middleware
 
-// Route to get all posts
-router.get('/', async (req, res) => {
+// GET all posts
+router.get('/posts', withAuth, async (req, res) => {
   try {
-    const postData = await Post.findAll();
-    res.status(200).json(postData);
+    const postData = await Post.findAll({
+      where: {
+        user_id: req.session.user_id, // Fetch posts only for the logged in user
+      },
+      include: [
+        {
+          model: User,
+          attributes: ['name'],
+        },
+        {
+          model: Comment,
+          attributes: ['id', 'comment_text', 'created_at'],
+          include: {
+            model: User,
+            attributes: ['name'],
+          },
+        },
+      ],
+    });
+
+    const posts = postData.map((post) => post.get({ plain: true }));
+    res.status(200).json(posts);
   } catch (err) {
+    console.error(err);
     res.status(500).json(err);
   }
 });
 
-// Route to create a new post
-router.post('/', async (req, res) => {
+// POST new post
+router.post('/posts', withAuth, async (req, res) => {
   try {
     const newPost = await Post.create({
-      ...req.body,
-      user_id: req.session.user_id,
+      title: req.body.title,
+      content: req.body.content,
+      user_id: req.session.user_id, // Assuming you have the user_id stored in the session
     });
+
     res.status(200).json(newPost);
   } catch (err) {
-    res.status(400).json(err);
+    console.error(err);
+    res.status(500).json(err);
+  }
+});
+
+// PUT update post
+router.put('/posts/:id', withAuth, async (req, res) => {
+  try {
+    const updatedPost = await Post.update(
+      {
+        title: req.body.title,
+        content: req.body.content,
+      },
+      {
+        where: {
+          id: req.params.id,
+          user_id: req.session.user_id, // Ensure only the post owner can update
+        },
+      }
+    );
+
+    if (!updatedPost[0]) {
+      res.status(404).json({ message: 'No post found with this id' });
+      return;
+    }
+
+    res.status(200).json(updatedPost);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json(err);
+  }
+});
+
+// DELETE post
+router.delete('/posts/:id', withAuth, async (req, res) => {
+  try {
+    const deletedPost = await Post.destroy({
+      where: {
+        id: req.params.id,
+        user_id: req.session.user_id, // Ensure only the post owner can delete
+      },
+    });
+
+    if (!deletedPost) {
+      res.status(404).json({ message: 'No post found with this id' });
+      return;
+    }
+
+    res.status(200).json(deletedPost);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json(err);
   }
 });
 
 module.exports = router;
+
+
+
 

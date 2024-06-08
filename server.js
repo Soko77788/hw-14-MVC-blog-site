@@ -24,6 +24,12 @@ const sess = {
 };
 
 app.use(session(sess));
+// Middleware to pass user data to views
+app.use((req, res, next) => {
+  res.locals.user = req.session.user_id || null;
+  next();
+});
+
 
 app.engine('handlebars', hbs.engine);
 app.set('view engine', 'handlebars');

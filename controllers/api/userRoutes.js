@@ -14,16 +14,20 @@ router.get('/', async (req, res) => {
 // Route to create a new user
 router.post('/', async (req, res) => {
   try {
-    const userData = await User.create(req.body);
-
-    req.session.save(() => {
-      req.session.user_id = userData.id;
-      req.session.logged_in = true;
-
-      res.json({ user: userData, message: 'You are now signed up and logged in!' });
+    const newUser = await User.create({
+      name: req.body.name,
+      email: req.body.email,
+      password: req.body.password,
     });
 
+    req.session.save(() => {
+      req.session.user_id = newUser.id;
+      req.session.logged_in = true;
+
+      res.status(200).json(newUser);
+    });
   } catch (err) {
+    console.error('Error during user creation:', err);
     res.status(500).json(err);
   }
 });
@@ -52,10 +56,11 @@ router.post('/login', async (req, res) => {
 });
 
 // Route to logout
-router.post('/logout', (req, res) => {
+router.get('/logout', (req, res) => {
   if (req.session.logged_in) {
     req.session.destroy(() => {
-      res.status(204).end();
+      // 
+      res.redirect('/')
     });
   } else {
     res.status(404).end();
