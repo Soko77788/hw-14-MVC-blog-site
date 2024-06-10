@@ -16,6 +16,8 @@ router.get('/', async (req, res) => {
   }
 });
 
+
+
 // Route to create a new comment
 router.post('/', withAuth, async (req, res) => {
   try {
@@ -23,10 +25,20 @@ router.post('/', withAuth, async (req, res) => {
       ...req.body,
       user_id: req.session.user_id,
     });
+
+    const commentWithUser = await Comment.findByPk(newComment.id, {
+      include: {
+        model: User,
+        attributes: ['name'],
+      },
+    });
+
     res.status(200).json(newComment);
   } catch (err) {
     res.status(400).json(err);
   }
 });
+
+
 
 module.exports = router;

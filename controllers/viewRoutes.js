@@ -60,8 +60,11 @@ router.get('/blogpost/:id', async (req, res) => {
       ],
     })
 
+   
+
     const post = postData.get({ plain: true })
-    console.log('Post Data:', post);
+    console.log('Post Data:', post.comments);
+    
   res.render('blogpost', {...post, logged_in: req.session.logged_in})
   } catch(err) {
     res.status(500).send('Error rendering blogpost route')

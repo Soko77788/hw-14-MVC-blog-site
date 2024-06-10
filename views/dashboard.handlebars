@@ -1,24 +1,30 @@
 {{!-- views/dashboard.handlebars --}}
+<h1 class="my-3">Bloggin it!</h1>
 {{#if posts.length}}
   {{#each posts}}
-    <div class="post" id="{{this.id}}">
-      <h2>{{this.title}}</h2>
-      <p>{{this.content}}</p>
-      <button class="edit-post-btn" data-id="{{this.id}}">Edit</button>
-      <button class="delete-post-btn" data-id="{{this.id}}">Delete</button>
-    </div>
+  {{> blogpost-card }}
   {{/each}}
 {{else}}
-  <p>No posts found.</p>
+  <p class="text-white">No posts found.</p>
 {{/if}}
 
-<button id="new-post-btn">New Post</button>
+<div class="text-center mt-5">
+    <button id="new-post-btn" class="btn btn-primary mb-3">New Post</button>
+  </div>
 
-<div id="post-form-container" style="display: none;">
-  <form id="post-form">
-    <input type="text" id="post-title" placeholder="Post Title" required />
-    <textarea id="post-content" placeholder="Post Content" required></textarea>
-    <button type="submit">Submit</button>
-  </form>
+  <div id="post-form-container" class="text-white bg-dark p-4 rounded" style="display: none;">
+    <form id="post-form">
+      <div class="form-group mb-3">
+        <input type="text" class="form-control" id="post-title" placeholder="Post Title" required />
+      </div>
+      <div class="form-group mb-3">
+        <textarea class="form-control" id="post-content" placeholder="Post Content" required></textarea>
+      </div>
+      <div class="text-center">
+        <button type="submit" class="btn btn-success">Submit</button>
+      </div>
+    </form>
+  </div>
 </div>
- <script src="/js/dashboard.js"></script>
+
+<script src="/js/dashboard.js"></script>
