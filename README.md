@@ -15,9 +15,9 @@ Use MVC to navigate a blog site
   
   ## Installation
 
-  To install necessary dependencies, run the following command:
 
-  * The app is up and running on Render. 
+  * The app is up and running on Render at 
+  https://hw-14-mvc-blog-site.onrender.com/
   
   ## Usage
   * Internet required. 
@@ -49,4 +49,5 @@ This project is unlicensed.
   * Some styling was done but i ran out of time. Too many hours spent trying to get it right. 
   * The app is functional it just doesn't look great. 
 
-  ## Video Demo Link
+  ## Video Link 
+  https://hw-14-mvc-blog-site.onrender.com/
